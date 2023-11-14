@@ -14,29 +14,31 @@ class App extends Component {
       return { [key]: prevState[key] + 1 };
     });
   };
-  handleClick = ev => {
-    this.updateState(ev.target.dataset.id);
+  // handleClick = ev => {
+  //   this.updateState(ev.target.dataset.id);
+  // };
+  countTotalFeedback = () => {
+    return Object.values(this.state).reduce((acc, el) => acc + el, 0);
   };
-  countTotalFeedback = obj => {
-    return Object.values(obj).reduce((acc, el) => acc + el, 0);
-  };
-  positivePercentage = obj => {
-    return Math.round((obj.good / this.countTotalFeedback(obj)) * 100) + '%';
+  positivePercentage = () => {
+    const { good } = this.state;
+    return Math.round((good / this.countTotalFeedback()) * 100) + '%';
   };
   render() {
     const { good, neutral, bad } = this.state;
+    const total = this.countTotalFeedback();
     return (
       <Section title={'Please leave feedback'}>
         <FeedbackOptions
           options={Object.keys(this.state)}
-          onLeaveFeedback={this.handleClick}
+          onLeaveFeedback={this.updateState}
         />
-        {good || neutral || bad ? (
+        {total ? (
           <Statistics
             good={good}
             neutral={neutral}
             bad={bad}
-            total={this.countTotalFeedback(this.state)}
+            total={total}
             positivePercentage={this.positivePercentage(this.state) || 0}
           />
         ) : (
